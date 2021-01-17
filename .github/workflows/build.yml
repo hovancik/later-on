@@ -1,0 +1,30 @@
+name: Node.js CI
+
+on:
+  push:
+    branches:
+      - release
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Use Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.18.3'
+    - if: matrix.os == 'ubuntu-latest'
+      run: |
+        sudo apt update
+        sudo apt-get install --no-install-recommends -y gcc-multilib g++-multilib bsdtar rpm libopenjp2-tools
+    - run: npm install
+    - run: npm install npm -g
+    - run: node_modules/.bin/electron-builder build
+      env:
+        GH_TOKEN: ${{ secrets.github_token }}
