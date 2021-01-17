@@ -1,0 +1,119 @@
+{
+  "name": "LaterOn",
+  "version": "0.0.1",
+  "description": "The reminder app",
+  "main": "main.js",
+  "engines": {
+    "node": "12.18.3"
+  },
+  "scripts": {
+    "dev": "cross-env NODE_ENV=development electron . --enable-logging --remote-debugging-port=9222",
+    "lint": "./node_modules/.bin/standard",
+    "start": "electron .",
+    "tdd": "mocha --watch test",
+    "test": "mocha test",
+    "test-single": "mocha $1",
+    "postinstall": "electron-builder install-app-deps"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hovancik/later-on.git"
+  },
+  "keywords": [
+    "LaterOn",
+    "reminder"
+  ],
+  "author": "Jan Hovancik <conta.srdr@gmail.com>",
+  "license": "BSD-2-Clause",
+  "bugs": {
+    "url": "https://github.com/hovancik/later-on/issues"
+  },
+  "homepage": "https://github.com/hovancik/later-on",
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "cross-env": "^7.0.3",
+    "electron": "^11.1.1",
+    "electron-builder": "^22.9.1",
+    "mocha": "^8.2.1",
+    "standard": "^16.0.3"
+  },
+  "build": {
+    "appId": "net.hovancik.later-on",
+    "productName": "LaterOn",
+    "dmg": {
+      "icon": "build/icon.icns",
+      "iconSize": 128,
+      "contents": [
+        {
+          "x": 355,
+          "y": 125,
+          "type": "link",
+          "path": "/Applications"
+        },
+        {
+          "x": 155,
+          "y": 125,
+          "type": "file"
+        }
+      ]
+    },
+    "mac": {
+      "category": "public.app-category.productivity",
+      "target": [
+        "dmg"
+      ],
+      "extendInfo": {
+        "LSBackgroundOnly": 1,
+        "LSUIElement": 1
+      }
+    },
+    "linux": {
+      "category": "Utility",
+      "target": [
+        "AppImage",
+        "deb",
+        "rpm",
+        "pacman",
+        "apk"
+      ]
+    },
+    "win": {
+      "target": [
+        "nsis",
+        "nsis-web"
+      ]
+    },
+    "nsis": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    },
+    "nsisWeb": {
+      "oneClick": false,
+      "allowToChangeInstallationDirectory": true
+    }
+  },
+  "standard": {
+    "parser": "babel-eslint",
+    "globals": [
+      "it",
+      "describe",
+      "before",
+      "after",
+      "beforeEach",
+      "afterEach",
+      "Notification"
+    ]
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "npm run lint"
+    }
+  },
+  "dependencies": {
+    "@breejs/later": "^4.0.2",
+    "electron-log": "^4.3.1",
+    "electron-store": "^6.0.1"
+  }
+}
