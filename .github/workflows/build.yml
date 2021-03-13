@@ -1,4 +1,4 @@
-name: Node.js CI
+name: Build Release Packages
 
 on:
   push:
@@ -22,7 +22,7 @@ jobs:
     - if: matrix.os == 'ubuntu-latest'
       run: |
         sudo apt update
-        sudo apt-get install --no-install-recommends -y gcc-multilib g++-multilib bsdtar rpm libopenjp2-tools
+        sudo apt-get install --no-install-recommends -y gcc-multilib g++-multilib libarchive-tools rpm libopenjp2-tools
     - run: npm install
     - run: npm install npm -g
     - run: node_modules/.bin/electron-builder build
