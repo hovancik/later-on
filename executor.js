@@ -1,67 +1,80 @@
 const later = require('@breejs/later')
-const { Notification } = require('electron')
 const log = require('electron-log')
+const Reminder = require('./reminder')
 later.date.localTime()
 
 class Executor {
   constructor (store) {
     this.store = store
-    this.reminders = store.get('reminders')
-    this.timers = this.reminders.map(reminder => reminder.name)
+    this.reminders = []
   }
 
   planSchedules () {
-    for (const reminder of this.reminders) {
-      if (reminder.cron) {
-        const schedule = later.parse.cron(reminder.cron)
-        if (schedule.error >= 0) {
-          log.error(`Error parsing ${reminder.name} at character ${schedule.error + 1} of '${reminder.cron}'`)
-        } else {
-          log.info(`Succesfully parsed ${reminder.name}`)
-        }
-        this.timers[reminder.name] = later.setInterval(
-          () => { this._notify(reminder) }
-          , schedule)
-      } else if (reminder.repeat) {
-        const schedule = later.parse.text(reminder.repeat)
-        if (schedule.error >= 0) {
-          log.error(`Error parsing ${reminder.name} at character ${schedule.error + 1} of '${reminder.repeat}'`)
-        } else {
-          log.info(`Succesfully parsed ${reminder.name}`)
-        }
-        this.timers[reminder.name] = later.setInterval(
-          () => { this._notify(reminder) }
-          , schedule)
-      } else {
-        const schedule = later.parse.text(reminder.once)
-        if (schedule.error >= 0) {
-          log.error(`Error parsing ${reminder.name} at character ${schedule.error + 1} of '${reminder.once}'`)
-        } else {
-          log.info(`Succesfully parsed ${reminder.name}`)
-        }
-        this.timers[reminder.name] = later.setTimeout(
-          () => { this._notify(reminder) }
-          , schedule)
-      }
+    for (const item of this.store.get('reminders')) {
+      this.reminders.push(new Reminder(item, this))
     }
   }
 
-  _notify (reminder) {
-    new Notification({
-      title: reminder.title,
-      body: reminder.body
-    }).show()
-    log.info(`Notified about ${reminder.name}`)
-    if (!reminder.keep && reminder.once) {
-      this._removeReminder(reminder)
-      log.info(`Removed ${reminder.name}`)
-    }
+  removeReminderByName (name) {
+    const index = this.store.get('reminders').findIndex(rem => rem.name === name)
+    this.removeReminder(index)
   }
 
-  _removeReminder (reminder) {
-    this.store.set('reminders',
-      this.store.get('reminders')
-        .filter(rem => rem.name !== reminder.name))
+  removeReminder (index) {
+    const storedReminders = this.store.get('reminders')
+    const removed = storedReminders.splice(index, 1)
+    this.store.set('reminders', storedReminders)
+    this.reminders[index].clearTimer()
+    this.reminders.splice(index, 1)
+    log.info(`Removed '${removed[0].name}'`)
+    return index
+  }
+
+  updateReminder (index, data) {
+    const storedReminders = this.store.get('reminders')
+    if (storedReminders[index] !== data.name) {
+      this.reminders[index].clearTimer()
+    }
+    const newReminder = {
+      name: data.name,
+      type: data.type,
+      interval: data.interval,
+      title: data.title,
+      body: data.body
+    }
+    if (data.type === 'once') {
+      newReminder.keep = data.keep
+    }
+    storedReminders[index] = newReminder
+    this.store.set('reminders', storedReminders)
+    this.reminders[index] = new Reminder(newReminder, this)
+    log.info(`Updated '${newReminder.name}' (${JSON.stringify(newReminder)})`)
+    return this.reminders[index].forFrontend
+  }
+
+  addReminder (data) {
+    const storedReminders = this.store.get('reminders')
+    const newReminder = {
+      name: data.name,
+      type: data.type,
+      interval: data.interval,
+      title: data.title,
+      body: data.body
+    }
+    if (data.type === 'once') {
+      newReminder.keep = data.keep
+    }
+    storedReminders.push(newReminder)
+    this.store.set('reminders', storedReminders)
+    this.reminders.push(new Reminder(newReminder, this))
+    log.info(`Added '${newReminder.name}' (${JSON.stringify(newReminder)})`)
+    return this.reminders.slice(-1).pop().forFrontend
+  }
+
+  get forFrontend () {
+    return this.reminders.map((item) => {
+      return item.forFrontend
+    })
   }
 }
 
