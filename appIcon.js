@@ -12,6 +12,10 @@ class AppIcon {
       return 'tray.png'
     }
   }
+
+  get windowIconFileName () {
+    return 'tray.png'
+  }
 }
 
 module.exports = AppIcon
