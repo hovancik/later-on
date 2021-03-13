@@ -39,6 +39,14 @@ function trayIconPath () {
   return path.join(__dirname, '/images/app-icons/', trayIconFileName)
 }
 
+function windowIconPath () {
+  const params = {
+    platform: process.platform
+  }
+  const windowIconFileName = new AppIcon(params).windowIconFileName
+  return path.join(__dirname, '/images/app-icons', windowIconFileName)
+}
+
 app.whenReady().then(() => {
   tray = new Tray(trayIconPath())
   const contextMenu = Menu.buildFromTemplate([
@@ -93,6 +101,7 @@ function showRemindersWindow () {
   }
   const modalPath = path.join('file://', __dirname, '/later-on.html')
   laterOnWindow = new BrowserWindow({
+    icon: windowIconPath(),
     webPreferences: {
       contextIsolation: true,
       preload: path.join(__dirname, 'preload.js')
@@ -102,7 +111,7 @@ function showRemindersWindow () {
   laterOnWindow.webContents.on('did-finish-load', () => {
     laterOnWindow.webContents.send('initReminders', executor.forFrontend)
   })
-  laterOnWindow.toggleDevTools()
+  // laterOnWindow.toggleDevTools()
   if (laterOnWindow) {
     laterOnWindow.on('closed', () => {
       laterOnWindow = null
