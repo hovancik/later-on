@@ -25,14 +25,15 @@ Error will not be show if your timings can't be parsed, so you might want to che
 
 ### Single run reminders
 
-On the first app run, example reminder gets created: we want to run only once (`"once": "..."`), but don't want to remove it (`"keep": true`) - user should do it manually. It will run ~10s every time after the app gets started (`"once": "every 10 seconds"`).
+On the first app run, example reminder gets created: we want to run only once (`"type": "once"`), but don't want to remove it (`"keep": true`) - user should do it manually. It will run ~10s every time after the app gets started (`"interval": "every 10 seconds"`).
 
 ```json
 {
 	"reminders": [
 		{
 			"name": "later-on",
-			"once": "every 10 seconds",
+			"type": "once",
+			"interval": "every 10 seconds",
 			"keep": true,
 			"title": "Welcome to Later On!",
 			"body": "Add your own reminders by editing config file. Read more in project's readme."
@@ -44,12 +45,13 @@ We use [this text parser](https://breejs.github.io/later/parsers.html#text) to s
 
 ### Multiple run reminders
 
- Let's say you want to reminder yourself to drink water every 2 hours. Specify [your interval](https://breejs.github.io/later/parsers.html#text) via `"repeat"`.
+ Let's say you want to reminder yourself to drink water every 2 hours. Specify [your interval](https://breejs.github.io/later/parsers.html#text) via `"type": "repeat"`.
 
 ```json
 {
   "name": "water",
-  "repeat": "every 2 hours",
+	"type": "repeat",
+  "interval": "every 2 hours",
   "title": "Drink up!",
   "body": "Drink some water. Refill your cup if needed."
 }
@@ -61,7 +63,8 @@ You can also use [cron](https://breejs.github.io/later/parsers.html#cron) synsta
 ```json
 {
   "name": "leave-work",
-  "cron": "15 17 ? * *",
+	"type": "cron",
+  "interval": "15 17 ? * *",
   "title": "Time to go :)",
   "body": "Let's clock out, fill the time-sheets and run! "
 }

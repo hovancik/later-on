@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- https://developer.mozilla.org/en-US/docs/Web/HTTP/CSP -->
+    <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <meta http-equiv="X-Content-Security-Policy" content="default-src 'self'; script-src 'self'">
+    <link rel="stylesheet" href="node_modules/@fortawesome/fontawesome-free/css/all.min.css">
+    <link rel="stylesheet" href="node_modules/bulma/css/bulma.css">
+    <script src="node_modules/reefjs/dist/reef.min.js"></script>
+    <title>LaterOn - The reminder app</title>
+  </head>
+  <body class="container is-fluid">
+    <h1 class="title has-text-centered mt-5">LaterOn - The reminder app</h1>
+    <div id="reminders">
+      <div class="has-text-centered">
+        <i class="fas fa-spinner fa-spin"></i> Loading...
+      </div>
+    </div>
+    <hr>
+    <div id="new">
+      <div class="has-text-centered">
+        <i class="fas fa-spinner fa-spin"></i> Loading...
+      </div>
+    </div>
+    <script src="./later-on.js"></script>
+  </body>
+</html>

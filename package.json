@@ -1,10 +1,10 @@
 {
   "name": "LaterOn",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "The reminder app",
   "main": "main.js",
   "engines": {
-    "node": "12.18.3"
+    "node": "14.16.0"
   },
   "scripts": {
     "dev": "cross-env NODE_ENV=development electron . --enable-logging --remote-debugging-port=9222",
@@ -29,16 +29,6 @@
     "url": "https://github.com/hovancik/later-on/issues"
   },
   "homepage": "https://github.com/hovancik/later-on",
-  "devDependencies": {
-    "babel-eslint": "^10.1.0",
-    "chai": "^4.2.0",
-    "chai-as-promised": "^7.1.1",
-    "cross-env": "^7.0.3",
-    "electron": "^11.1.1",
-    "electron-builder": "^22.9.1",
-    "mocha": "^8.2.1",
-    "standard": "^16.0.3"
-  },
   "build": {
     "appId": "net.hovancik.later-on",
     "productName": "LaterOn",
@@ -103,7 +93,9 @@
       "after",
       "beforeEach",
       "afterEach",
-      "Notification"
+      "Notification",
+      "Reef",
+      "confirm"
     ]
   },
   "husky": {
@@ -113,7 +105,20 @@
   },
   "dependencies": {
     "@breejs/later": "^4.0.2",
+    "@fortawesome/fontawesome-free": "^5.15.2",
+    "bulma": "^0.9.2",
     "electron-log": "^4.3.1",
-    "electron-store": "^6.0.1"
+    "electron-store": "^6.0.1",
+    "reefjs": "^8.0.2"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "chai": "^4.3.3",
+    "chai-as-promised": "^7.1.1",
+    "cross-env": "^7.0.3",
+    "electron": "^12.0.0",
+    "electron-builder": "^22.10.5",
+    "mocha": "^8.3.1",
+    "standard": "^16.0.3"
   }
 }

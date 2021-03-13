@@ -1,4 +1,4 @@
-const { app, shell, Menu, Tray } = require('electron')
+const { app, shell, Menu, Tray, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 const log = require('electron-log')
 const Store = require('electron-store')
@@ -6,6 +6,8 @@ const Executor = require('./executor')
 const AppIcon = require('./appIcon')
 let tray = null
 let store
+let laterOnWindow = null
+let executor
 
 app.whenReady().then(() => {
   const schema = {
@@ -14,7 +16,8 @@ app.whenReady().then(() => {
       default: [
         {
           name: 'later-on',
-          once: 'every 10 seconds',
+          type: 'once',
+          interval: 'every 10 seconds',
           keep: true,
           title: 'Welcome to LaterOn!',
           body: 'Add your own reminders by editing config file. Learn more at https://LaterOn.app.'
@@ -24,7 +27,7 @@ app.whenReady().then(() => {
   }
 
   store = new Store({ schema })
-  const executor = new Executor(store)
+  executor = new Executor(store)
   executor.planSchedules()
 })
 
@@ -40,8 +43,15 @@ app.whenReady().then(() => {
   tray = new Tray(trayIconPath())
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'LaterOn',
+      label: 'LaterOn - The reminder app',
       enabled: false
+    }, {
+      type: 'separator'
+    }, {
+      label: 'Reminders',
+      click: function () {
+        showRemindersWindow()
+      }
     }, {
       type: 'separator'
     }, {
@@ -76,6 +86,78 @@ if (!gotTheLock) {
   app.quit()
 }
 
+function showRemindersWindow () {
+  if (laterOnWindow) {
+    laterOnWindow.show()
+    return
+  }
+  const modalPath = path.join('file://', __dirname, '/later-on.html')
+  laterOnWindow = new BrowserWindow({
+    webPreferences: {
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload.js')
+    }
+  })
+  laterOnWindow.loadURL(modalPath)
+  laterOnWindow.webContents.on('did-finish-load', () => {
+    laterOnWindow.webContents.send('initReminders', executor.forFrontend)
+  })
+  laterOnWindow.toggleDevTools()
+  if (laterOnWindow) {
+    laterOnWindow.on('closed', () => {
+      laterOnWindow = null
+    })
+  }
+}
+
 app.on('window-all-closed', function () {
   // do nothing, so app wont get closed
+})
+
+ipcMain.handle('remove-reminder', async (event, index) => {
+  return await executor.removeReminder(index)
+})
+
+ipcMain.handle('update-reminder', async (event, index, input) => {
+  return await executor.updateReminder(index, input)
+})
+
+ipcMain.handle('add-reminder', async (event, input) => {
+  return await executor.addReminder(input)
+})
+
+ipcMain.handle('validate-interval', (event, input) => {
+  const later = require('@breejs/later')
+  later.date.localTime()
+  let parsed, error
+  if (input.type === 'cron') {
+    parsed = later.parse.cron(input.interval)
+    if (later.schedule(parsed).next(3).length > 0) {
+      error = -1
+    } else {
+      error = 0
+    }
+  } else {
+    parsed = later.parse.text(input.interval)
+  }
+
+  if (typeof (error) === 'undefined') {
+    error = parsed.error
+  }
+
+  if (input.interval === '') {
+    error = 0
+  }
+
+  return {
+    canUseName: input.oldname === input.name ||
+      (input.oldname !== input.name && input.name !== '' &&
+        !(executor.reminders.map((item) => item.name).includes(input.name))),
+    error: error,
+    schedules: error === -1
+      ? (input.type === 'once'
+          ? [later.schedule(parsed).next()]
+          : later.schedule(parsed).next(3))
+      : 0
+  }
 })
