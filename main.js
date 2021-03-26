@@ -19,8 +19,8 @@ app.whenReady().then(() => {
           type: 'once',
           interval: 'every 10 seconds',
           keep: true,
-          title: 'Welcome to LaterOn!',
-          body: 'Add your own reminders by editing config file. Learn more at https://LaterOn.app.'
+          title: 'Welcome to LaterOn - The reiminder app!',
+          body: 'Learn more at https://LaterOn.app.'
         }
       ]
     }

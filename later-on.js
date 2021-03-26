@@ -75,109 +75,121 @@ const reminders = new Reef('#reminders', {
       props.reminders.map((reminder, index) => {
         return `
           <div class='box' data-index="${index}">
-            <div class='content'>
-              <article class='is-pulled-right'>
-                <span class='icon has-text-info'>
-                  <i class="is-clickable fas fa-edit edit"></i>
-                </span>
-                <span class='icon has-text-danger'>
-                  <i class='is-clickable fas fa-trash-alt remove'></i>
-                </span>
-              </article>
-              ${reminder.editing
-                ? `
-                    <form class="edit">
-                      <input type="text" name="oldname" value="${reminder.name}" hidden>
-                      <div class="field">
-                        <label class="label" for="name">Name</label>
-                        <div class="control">
-                          <input class="input" type="text" name="name" reef-default-value="${reminder.name}" placeholder="Unique name">
-                        </div>
+            <nav class="level">
+              <div class="level-left">
+                <div class="level-item">
+                  <span class="title">${reminder.name}</span>
+                </div>
+              </div>
+              <div class="level-right">
+                <div class="level-item buttons">
+                  <button class="button is-light is-small is-info edit">
+                    <span>Edit</span>
+                    <span class="icon is-small">
+                      <i class="fas fa-edit"></i>
+                    </span>
+                  </button>
+                  <button class="button is-light is-small is-danger remove">
+                    <span>Remove</span>
+                    <span class="icon is-small">
+                      <i class="fas fa-trash-alt"></i>
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </nav>
+            ${reminder.editing
+              ? `
+                  <form class="edit">
+                    <input type="text" name="oldname" value="${reminder.name}" hidden>
+                    <div class="field">
+                      <label class="label" for="name">Name</label>
+                      <div class="control">
+                        <input class="input" type="text" name="name" reef-default-value="${reminder.name}" placeholder="Unique name">
                       </div>
-                      <div class="field">
-                        <label class="label">Notification title</label>
-                        <div class="control">
-                          <input class="input" name="title" type="text" reef-default-value="${reminder.title}" placeholder="Notification title">
-                        </div>
-                      </div>
-                      <div class="field">
-                        <label class="label">Notification body</label>
-                        <div class="control">
-                          <input class="input" name="body" type="text" reef-default-value="${reminder.body}" placeholder="Notification body">
-                        </div>
-                      </div>
-                      <div class="field">
-                        <label class="label">Type</label>
-                        <div class="control">
-                          <div class="select">
-                            <select name="type">
-                              <option ${reminder.type === 'repeat' ? 'reef-default-selected' : ''}>repeat</option>
-                              <option ${reminder.type === 'once' ? 'reef-default-selected' : ''}>once</option>
-                              <option ${reminder.type === 'cron' ? 'reef-default-selected' : ''}>cron</option>
-                            </select>
-                          </div>
-                        </div>
-                      </div>
-                      <div class="field">
-                      ${reminder.editingType === 'once'
-                        ? `<label class="checkbox">
-                            <input type="checkbox" name="keep" ${reminder.keep ? 'reef-default-checked' : ''} >
-                            Don't remove after the notification.
-                          </label>`
-                        : ''
-                      }
-                      </div>
-                      <div class="field">
-                        <label class="label">Interval</label>
-                        <div class="control">
-                          <input class="input" name="interval" type="text" reef-default-value="${reminder.interval}" placeholder="Interval">
-                        </div>
-                      </div>
-                      <div class="field">
-                        <p class="help validation">${reminder.validation}</p>
-                      </div>
-                      <div class="field is-grouped">
-                        <div class="control">
-                          <a class="button is-link submit update" ${reminder.canSubmit ? '' : 'disabled'}>Submit</a>
-                        </div>
-                        <div class="control">
-                          <a class="button is-link is-light edit">Cancel</a>
-                        </div>
-                      </div>
-                    </form>
-                  `
-                : `
-                  <h2>${reminder.name}</h2>
-                  <article class='message is-info'>
-                    <div class='message-body'>
-                      <strong>${reminder.title}</strong><br/>
-                      ${reminder.body}
                     </div>
-                  </article>
-                  <article class='icon-text'>
-                    <span class='icon'>
-                      <i class='fas fa-bell'></i>
-                    </span>
-                    ${reminder.schedules.map((t) => {
-                    return `
-                    <span class='icon'>
-                      <i class='fas fa-arrow-right'></i>
-                    </span>
-                    <span>${new Date(t).toLocaleString()}</span>
-                    `
-                    }).join('')}
-                  </article>
-                  <article>
-                    <span class='icon'>
-                      <i class='fas fa-sync-alt'></i>
-                    </span>
-                    <strong>${reminder.type}</strong>
-                    ${reminder.interval}
-                    ${reminder.keep ? '<span class="tag is-info is-light">Keep</span>' : ''}
-                  </article>
+                    <div class="field">
+                      <label class="label">Notification title</label>
+                      <div class="control">
+                        <input class="input" name="title" type="text" reef-default-value="${reminder.title}" placeholder="Notification title">
+                      </div>
+                    </div>
+                    <div class="field">
+                      <label class="label">Notification body</label>
+                      <div class="control">
+                        <input class="input" name="body" type="text" reef-default-value="${reminder.body}" placeholder="Notification body">
+                      </div>
+                    </div>
+                    <div class="field">
+                      <label class="label">Type</label>
+                      <div class="control">
+                        <div class="select">
+                          <select name="type">
+                            <option ${reminder.type === 'repeat' ? 'reef-default-selected' : ''}>repeat</option>
+                            <option ${reminder.type === 'once' ? 'reef-default-selected' : ''}>once</option>
+                            <option ${reminder.type === 'cron' ? 'reef-default-selected' : ''}>cron</option>
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="field">
+                    ${reminder.editingType === 'once'
+                      ? `<label class="checkbox">
+                          <input type="checkbox" name="keep" ${reminder.keep ? 'reef-default-checked' : ''} >
+                          Don't remove after the notification.
+                        </label>`
+                      : ''
+                    }
+                    </div>
+                    <div class="field">
+                      <label class="label">Interval</label>
+                      <div class="control">
+                        <input class="input" name="interval" type="text" reef-default-value="${reminder.interval}" placeholder="Interval">
+                      </div>
+                    </div>
+                    <div class="field">
+                      <p class="help validation">${reminder.validation}</p>
+                    </div>
+                    <div class="field is-grouped">
+                      <div class="control">
+                        <a class="button is-link submit update" ${reminder.canSubmit ? '' : 'disabled'}>Submit</a>
+                      </div>
+                      <div class="control">
+                        <button class="button is-link is-light edit">Cancel</button>
+                      </div>
+                    </div>
+                  </form>
                 `
-              }
-            </div>
+              : `
+                <article class='message is-info'>
+                  <div class='message-body'>
+                    <strong>${reminder.title}</strong><br/>
+                    ${reminder.body}
+                  </div>
+                </article>
+                <article class='icon-text'>
+                  <span class='icon'>
+                    <i class='fas fa-bell'></i>
+                  </span>
+                  ${reminder.schedules.map((t) => {
+                  return `
+                  <span class='icon'>
+                    <i class='fas fa-arrow-right'></i>
+                  </span>
+                  <span>${new Date(t).toLocaleString()}</span>
+                  `
+                  }).join('')}
+                </article>
+                <article>
+                  <span class='icon'>
+                    <i class='fas fa-sync-alt'></i>
+                  </span>
+                  <strong>${reminder.type}</strong>
+                  ${reminder.interval}
+                  ${reminder.keep ? '<span class="tag is-info is-light">Keep</span>' : ''}
+                </article>
+              `
+            }
           </div>
         `
       }).join('')
@@ -188,7 +200,8 @@ const reminders = new Reef('#reminders', {
 reminders.render()
 
 document.addEventListener('click', function (event) {
-  if (event.target.matches('.remove')) {
+  if (event.target.closest('button') && event.target.closest('button').matches('.remove')) {
+    event.preventDefault()
     const confirmation = confirm('Are you sure you want to remove this reminder?')
     if (confirmation) {
       const dataset = event.target.closest('.box').dataset
@@ -198,12 +211,14 @@ document.addEventListener('click', function (event) {
     }
   }
 
-  if (event.target.matches('.edit')) {
+  if (event.target.closest('button') && event.target.closest('button').matches('.edit')) {
+    event.preventDefault()
     const dataset = event.target.closest('.box').dataset
     store.do('updateValue', dataset.index, 'editing', '')
   }
 
   if (event.target.matches('.submit.update')) {
+    event.preventDefault()
     const dataset = event.target.closest('.box').dataset
     const form = event.target.closest('form')
     const data = new FormData(form)
