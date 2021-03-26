@@ -6,75 +6,49 @@
 
 *LaterOn* is a cross-platform [Electron](https://www.electronjs.org/) app that allows you to create custom reminders.
 
-Currently, *LaterOn* is considered an *alpha*-quality software. There's a UI to add/change/remove the reminders, plus menu items in Tray that allow you to open UI, quickly open config file, log file and Quit the app.
-
-Download from [Releases page](https://github.com/hovancik/later-on/releases).
+Currently, *LaterOn* is considered an *alpha*-quality software. Download it from [Releases page](https://github.com/hovancik/later-on/releases).
 
 [![Become a Sponsor!](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=success)](https://github.com/sponsors/hovancik) [![Become a Patron!](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=Patreon&color=success)](https://www.patreon.com/hovancik)
 
-
 ## Reminders
 
-Reminders appear in a form of a regular OS notification.
+*LaterOn* lives in your tray and sends the reminders as defined by your schedule. They appear in a form of a regular OS notification. Here's an example of the default reminder that comes on the start of the app:
 
-<img src="notification.png" alt="LaterOn notification" height="100">
+<img src="notification.png" alt="LaterOn notification" height="90">
 
-You can set title and body of such a notification and when you would like it to be run.
+You can view your existing reminders from tray "Reminders" menu. Example notification is show, together with the next occurrences and the rule.
 
 <img src="reminders.png" alt="LaterOn">
 
-### Config file
+You can then edit or remove a reminder.
 
-You can add new reminders by editing config file (from tray menu) and then restarting *LaterOn* to load the changes done.
+<img src="edit-reminder.png" alt="LaterOn">
 
-Error will not be show if your timings can't be parsed, so you might want to check the log file when making changes via config file.
+**Name** is a unique identifier.
 
-#### Single run reminders
+**Notification title** is a title of the notification that you'll receive.
 
-On the first app run, example reminder gets created: we want to run only once (`"type": "once"`), but don't want to remove it (`"keep": true`) - user should do it manually. It will run ~10s every time after the app gets started (`"interval": "every 10 seconds"`).
+**Notification body** is a body of the notification that you'll receive.
 
-```json
-{
-  "reminders": [
-    {
-      "name": "later-on",
-      "type": "once",
-      "interval": "every 10 seconds",
-      "keep": true,
-      "title": "Welcome to Later On!",
-      "body": "Read more at https://lateron.app."
-    }
-  ]
-}
-```
-We use [this text parser](https://breejs.github.io/later/parsers.html#text) to specify when the reminder should be run.
+**Type** is an type of interval that you want to use. Can be either:
+  - **repeat** - notification is repeated according to the specified interval,
+  - **once** notification is shown once and then deleted - unless *Don't remove after the notification.* is checked.
+  - **cron** - which is a specific syntax for repeat type
 
-#### Multiple run reminders
+**Interval** let's you specify schedule for notifications.
 
- Let's say you want to reminder yourself to drink water every 2 hours. Specify [your interval](https://breejs.github.io/later/parsers.html#text) via `"type": "repeat"`.
+Here are some examples for *repeat* and *once* type *intervals*:
+- `every weekday at 9:00am also at 2:00pm`
+- `every weekday every 60 min starting on the 30th min after 8th hour and before 18th hour`
 
-```json
-{
-  "name": "water",
-  "type": "repeat",
-  "interval": "every 2 hours",
-  "title": "Drink up!",
-  "body": "Drink some water. Refill your cup if needed."
-}
-```
+Syntax is very flexible and you can learn more at [the docs of the used library](https://breejs.github.io/later/parsers.html#text).
 
-#### Cron reminders
-You can also use [cron](https://breejs.github.io/later/parsers.html#cron) synstax, ie. reminder to leave work at 5:15PM:
+You can also use [cron](https://breejs.github.io/later/parsers.html#cron) syntax.
 
-```json
-{
-  "name": "leave-work",
-  "type": "cron",
-  "interval": "15 17 ? * *",
-  "title": "Time to go :)",
-  "body": "Let's clock out, fill the time-sheets and run! "
-}
-```
+Same rules apply when adding new reminder, which can be found at the bottom of the screen.
+
+<img src="new-reminder.png" alt="LaterOn">
+
 
 ## Credits
 
