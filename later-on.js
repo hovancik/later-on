@@ -77,9 +77,6 @@ const reminders = new Reef('#reminders', {
           <div class='box' data-index="${index}">
             <nav class="level">
               <div class="level-left">
-                <div class="level-item">
-                  <span class="title">${reminder.name}</span>
-                </div>
               </div>
               <div class="level-right">
                 <div class="level-item buttons">
@@ -101,13 +98,7 @@ const reminders = new Reef('#reminders', {
             ${reminder.editing
               ? `
                   <form class="edit">
-                    <input type="text" name="oldname" value="${reminder.name}" hidden>
-                    <div class="field">
-                      <label class="label" for="name">Name</label>
-                      <div class="control">
-                        <input class="input" type="text" name="name" reef-default-value="${reminder.name}" placeholder="Unique name">
-                      </div>
-                    </div>
+                    <input type="text" name="uuid" value="${reminder.uuid}" hidden>
                     <div class="field">
                       <label class="label">Notification title</label>
                       <div class="control">
@@ -244,7 +235,7 @@ document.addEventListener('input', function (event) {
     }
 
     window.api.validateInterval(input, (data) => {
-      if (data.error === -1 && data.canUseName) {
+      if (data.error === -1) {
         store.do('updateValue', index, 'canSubmit', true)
         store.do('updateValue', index, 'validation', data.schedules.map((t) => {
           return `
@@ -259,8 +250,6 @@ document.addEventListener('input', function (event) {
         store.do('updateValue', index, 'validation', `<span class='icon'>
           <i class='fas fa-exclamation-circle'></i></span>
           ${data.error >= 0 ? `Error at interval: ${data.error}` : ''}
-          ${data.error >= 0 && !data.canUseName ? ', ' : ''}
-          ${!data.canUseName ? 'Error at name: please, choose another' : ''}
           `)
       }
     })
@@ -280,13 +269,6 @@ const newReminder = new Reef('#new', {
       <div class='content'>
         <h2 class="title">Add new Reminder</h2>
         <form class="new">
-          <input type="text" name="oldname" value="\`" hidden>
-          <div class="field">
-            <label class="label" for="name">Name</label>
-            <div class="control">
-              <input class="input" type="text" name="name" placeholder="Unique name">
-            </div>
-          </div>
           <div class="field">
             <label class="label">Notification title</label>
             <div class="control">
@@ -375,7 +357,7 @@ document.addEventListener('input', function (event) {
     store.do('updateNewValue', event.target.name, event.target.value)
 
     window.api.validateInterval(input, (data) => {
-      if (data.error === -1 && data.canUseName) {
+      if (data.error === -1) {
         store.do('updateNewValue', 'canSubmit', true)
         store.do('updateNewValue', 'validation', data.schedules.map((t) => {
           return `
@@ -390,8 +372,6 @@ document.addEventListener('input', function (event) {
         store.do('updateNewValue', 'validation', `<span class='icon'>
           <i class='fas fa-exclamation-circle'></i></span>
           ${data.error >= 0 ? `Error at interval: ${data.error}` : ''}
-          ${data.error >= 0 && !data.canUseName ? ', ' : ''}
-          ${!data.canUseName ? 'Error at name: please, choose another' : ''}
           `)
       }
     })

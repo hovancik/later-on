@@ -1,7 +1,17 @@
-const { app, shell, Menu, Tray, BrowserWindow, ipcMain } = require('electron')
+const {
+  app,
+  shell,
+  Menu,
+  Tray,
+  BrowserWindow,
+  ipcMain
+} = require('electron')
 const path = require('path')
 const log = require('electron-log')
 const Store = require('electron-store')
+const {
+  v4: uuidv4
+} = require('uuid')
 const Executor = require('./executor')
 const AppIcon = require('./appIcon')
 let tray = null
@@ -13,20 +23,33 @@ app.whenReady().then(() => {
   const schema = {
     reminders: {
       type: 'array',
-      default: [
-        {
-          name: 'later-on',
-          type: 'once',
-          interval: 'every 10 seconds',
-          keep: true,
-          title: 'Welcome to LaterOn - The reminder app!',
-          body: 'Learn more at https://LaterOn.app.'
-        }
-      ]
+      default: [{
+        uuid: uuidv4(),
+        type: 'once',
+        interval: 'every 10 seconds',
+        keep: true,
+        title: 'Welcome to LaterOn - The reminder app!',
+        body: 'Learn more at https://LaterOn.app.'
+      }]
     }
   }
 
-  store = new Store({ schema })
+  const migrations = {
+    '0.0.4': store => {
+      const reminders = store.get('reminders')
+      for (const item of reminders) {
+        delete item.name
+        item.uuid = uuidv4()
+      }
+      store.set('reminders', reminders)
+      store.delete('old')
+    }
+  }
+
+  store = new Store({
+    schema,
+    migrations
+  })
   executor = new Executor(store)
   executor.planSchedules()
 })
@@ -49,39 +72,37 @@ function windowIconPath () {
 
 app.whenReady().then(() => {
   tray = new Tray(trayIconPath())
-  const contextMenu = Menu.buildFromTemplate([
-    {
-      label: 'LaterOn - The reminder app',
-      enabled: false
-    }, {
-      type: 'separator'
-    }, {
-      label: 'Reminders',
-      click: function () {
-        showRemindersWindow()
-      }
-    }, {
-      type: 'separator'
-    }, {
-      label: 'Open config.json',
-      click: function () {
-        shell.openPath(store.path)
-      }
-    }, {
-      label: 'Open log',
-      click: function () {
-        shell.openPath(log.transports.file.getFile().path)
-      }
-    }, {
-      type: 'separator'
-    }, {
-      label: 'Quit LaterOn',
-      role: 'quit',
-      click: function () {
-        app.quit()
-      }
+  const contextMenu = Menu.buildFromTemplate([{
+    label: 'LaterOn - The reminder app',
+    enabled: false
+  }, {
+    type: 'separator'
+  }, {
+    label: 'Reminders',
+    click: function () {
+      showRemindersWindow()
     }
-  ])
+  }, {
+    type: 'separator'
+  }, {
+    label: 'Open config.json',
+    click: function () {
+      shell.openPath(store.path)
+    }
+  }, {
+    label: 'Open log',
+    click: function () {
+      shell.openPath(log.transports.file.getFile().path)
+    }
+  }, {
+    type: 'separator'
+  }, {
+    label: 'Quit LaterOn',
+    role: 'quit',
+    click: function () {
+      app.quit()
+    }
+  }])
   tray.setToolTip('LaterOn - The reminder app')
   tray.setContextMenu(contextMenu)
   if (process.platform === 'darwin') {
@@ -150,7 +171,7 @@ ipcMain.handle('validate-interval', (event, input) => {
     parsed = later.parse.text(input.interval)
   }
 
-  if (typeof (error) === 'undefined') {
+  if (typeof(error) === 'undefined') {
     error = parsed.error
   }
 
@@ -159,14 +180,9 @@ ipcMain.handle('validate-interval', (event, input) => {
   }
 
   return {
-    canUseName: input.oldname === input.name ||
-      (input.oldname !== input.name && input.name !== '' &&
-        !(executor.reminders.map((item) => item.name).includes(input.name))),
     error: error,
-    schedules: error === -1
-      ? (input.type === 'once'
-          ? [later.schedule(parsed).next()]
-          : later.schedule(parsed).next(3))
-      : 0
+    schedules: error === -1 ?
+      (input.type === 'once' ? [later.schedule(parsed).next()] :
+        later.schedule(parsed).next(3)) : 0
   }
 })

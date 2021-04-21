@@ -24,8 +24,6 @@ You can then edit or remove a reminder.
 
 <img src="edit-reminder.png" alt="LaterOn">
 
-**Name** is a unique identifier.
-
 **Notification title** is a title of the notification that you'll receive.
 
 **Notification body** is a body of the notification that you'll receive.

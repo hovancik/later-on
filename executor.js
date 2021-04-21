@@ -1,5 +1,8 @@
 const later = require('@breejs/later')
 const log = require('electron-log')
+const {
+  v4: uuidv4
+} = require('uuid')
 const Reminder = require('./reminder')
 later.date.localTime()
 
@@ -15,8 +18,8 @@ class Executor {
     }
   }
 
-  removeReminderByName (name) {
-    const index = this.store.get('reminders').findIndex(rem => rem.name === name)
+  removeReminderByUuid (uuid) {
+    const index = this.store.get('reminders').findIndex(rem => rem.uuid === uuid)
     this.removeReminder(index)
   }
 
@@ -26,17 +29,17 @@ class Executor {
     this.store.set('reminders', storedReminders)
     this.reminders[index].clearTimer()
     this.reminders.splice(index, 1)
-    log.info(`Removed '${removed[0].name}'`)
+    log.info(`Removed '${removed[0].uuid}'`)
     return index
   }
 
   updateReminder (index, data) {
     const storedReminders = this.store.get('reminders')
-    if (storedReminders[index] !== data.name) {
+    if (storedReminders[index] !== data.uuid) {
       this.reminders[index].clearTimer()
     }
     const newReminder = {
-      name: data.name,
+      uuid: data.uuid,
       type: data.type,
       interval: data.interval,
       title: data.title,
@@ -48,14 +51,14 @@ class Executor {
     storedReminders[index] = newReminder
     this.store.set('reminders', storedReminders)
     this.reminders[index] = new Reminder(newReminder, this)
-    log.info(`Updated '${newReminder.name}' (${JSON.stringify(newReminder)})`)
+    log.info(`Updated '${newReminder.uuid}' (${JSON.stringify(newReminder)})`)
     return this.reminders[index].forFrontend
   }
 
   addReminder (data) {
     const storedReminders = this.store.get('reminders')
     const newReminder = {
-      name: data.name,
+      uuid: uuidv4(),
       type: data.type,
       interval: data.interval,
       title: data.title,
@@ -67,7 +70,7 @@ class Executor {
     storedReminders.push(newReminder)
     this.store.set('reminders', storedReminders)
     this.reminders.push(new Reminder(newReminder, this))
-    log.info(`Added '${newReminder.name}' (${JSON.stringify(newReminder)})`)
+    log.info(`Added '${newReminder.uuid}' (${JSON.stringify(newReminder)})`)
     return this.reminders.slice(-1).pop().forFrontend
   }
 
