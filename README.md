@@ -16,11 +16,11 @@ Currently, *LaterOn* is considered an *alpha*-quality software. Download it from
 
 <img src="notification.png" alt="LaterOn notification" height="90">
 
-You can view your existing reminders from tray "Reminders" menu. Example notification is show, together with the next occurrences and the rule.
+You can manage your reminders from tray "Reminders" menu.
 
 <img src="reminders.png" alt="LaterOn">
 
-You can then edit or remove a reminder.
+Example notification is show, together with the next occurrences and the rule. You can then edit or remove a reminder.
 
 <img src="edit-reminder.png" alt="LaterOn">
 
@@ -43,10 +43,9 @@ Syntax is very flexible and you can learn more at [the docs of the used library]
 
 You can also use [cron](https://breejs.github.io/later/parsers.html#cron) syntax.
 
-Same rules apply when adding new reminder, which can be found at the bottom of the screen.
+Same rules apply when adding new reminder.
 
 <img src="new-reminder.png" alt="LaterOn">
-
 
 ## Credits
 

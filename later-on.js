@@ -4,6 +4,7 @@ const store = new Reef.Store({
   data: {
     reminders: [],
     newReminder: {
+      isVisible: false,
       type: 'repeat',
       validation: '',
       canSubmit: false
@@ -42,6 +43,7 @@ const store = new Reef.Store({
     },
     cancelNew: function (props) {
       props.newReminder = {
+        isVisible: true,
         type: 'repeat',
         validation: '',
         canSubmit: false
@@ -63,6 +65,9 @@ const store = new Reef.Store({
   getters: {
     reminder: function (props, index) {
       return props.reminders[index]
+    },
+    newReminder: function (props) {
+      return props.newReminder
     }
   }
 })
@@ -143,7 +148,7 @@ const reminders = new Reef('#reminders', {
                     </div>
                     <div class="field is-grouped">
                       <div class="control">
-                        <a class="button is-link submit update" ${reminder.canSubmit ? '' : 'disabled'}>Submit</a>
+                        <a class="button is-link submit update" ${reminder.canSubmit ? '' : 'disabled'}>Edit reminder</a>
                       </div>
                       <div class="control">
                         <button class="button is-link is-light edit">Cancel</button>
@@ -266,8 +271,29 @@ const newReminder = new Reef('#new', {
   template: function (props) {
     const newReminder = props.newReminder
     return `<div class='box'>
-      <div class='content'>
-        <h2 class="title">Add new Reminder</h2>
+      <nav class="level">
+        <div class="level-left">
+          <h2 class="title is-5">Add reminder</h2>
+        </div>
+        <div class="level-right">
+          ${newReminder.isVisible
+            ? `<button class="button is-light is-small is-white visibility">
+                <span>Hide</span>
+                <span class="icon is-small">
+                  <i class="fas fa-chevron-up"></i>
+                </span>
+              </button>`
+            : `<button class="button is-light is-small is-white visibility">
+                <span>Show</span>
+                <span class="icon is-small">
+                  <i class="fas fa-chevron-down"></i>
+                </span>
+              </button>`
+          }
+        </div>
+      </nav>
+      ${newReminder.isVisible
+        ? `<div class='content'>
         <form class="new">
           <div class="field">
             <label class="label">Notification title</label>
@@ -313,14 +339,16 @@ const newReminder = new Reef('#new', {
           </div>
           <div class="field is-grouped">
             <div class="control">
-              <a class="button is-link submit new" ${newReminder.canSubmit ? '' : 'disabled'}>Submit</a>
+              <a class="button is-link submit new" ${newReminder.canSubmit ? '' : 'disabled'}>Add reminder</a>
             </div>
             <div class="control">
               <a class="button is-link is-light cancel new">Cancel</a>
             </div>
           </div>
         </form>
-      </div>
+      </div>`
+      : ''
+    }
     </div>`
   }
 })
@@ -345,6 +373,9 @@ document.addEventListener('click', function (event) {
         event.target.closest('form').reset()
       })
     }
+  }
+  if (event.target.closest('button') && event.target.closest('button').matches('.visibility')) {
+    store.do('updateNewValue', 'isVisible', !store.get('newReminder').isVisible)
   }
 })
 
