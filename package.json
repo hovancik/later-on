@@ -13,7 +13,8 @@
     "tdd": "mocha --watch test",
     "test": "mocha test",
     "test-single": "mocha $1",
-    "postinstall": "electron-builder install-app-deps"
+    "postinstall": "electron-builder install-app-deps",
+    "prepare": "husky install"
   },
   "repository": {
     "type": "git",
@@ -110,6 +111,7 @@
     "cross-env": "^7.0.3",
     "electron": "^12.0.5",
     "electron-builder": "^22.10.5",
+    "husky": "^6.0.0",
     "mocha": "^8.3.2",
     "standard": "^16.0.3"
   },
