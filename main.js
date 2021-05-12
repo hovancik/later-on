@@ -171,7 +171,7 @@ ipcMain.handle('validate-interval', (event, input) => {
     parsed = later.parse.text(input.interval)
   }
 
-  if (typeof(error) === 'undefined') {
+  if (typeof (error) === 'undefined') {
     error = parsed.error
   }
 
@@ -181,8 +181,10 @@ ipcMain.handle('validate-interval', (event, input) => {
 
   return {
     error: error,
-    schedules: error === -1 ?
-      (input.type === 'once' ? [later.schedule(parsed).next()] :
-        later.schedule(parsed).next(3)) : 0
+    schedules: error === -1
+      ? (input.type === 'once'
+          ? [later.schedule(parsed).next()]
+          : later.schedule(parsed).next(3))
+      : 0
   }
 })

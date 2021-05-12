@@ -96,7 +96,8 @@
       "afterEach",
       "Notification",
       "Reef",
-      "confirm"
+      "confirm",
+      "FormData"
     ]
   },
   "husky": {
