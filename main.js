@@ -16,7 +16,7 @@ const Executor = require('./executor')
 const AppIcon = require('./appIcon')
 let tray = null
 let store
-let laterOnWindow = null
+let remindersWindow = null
 let executor
 
 app.whenReady().then(() => {
@@ -116,26 +116,30 @@ if (!gotTheLock) {
 }
 
 function showRemindersWindow () {
-  if (laterOnWindow) {
-    laterOnWindow.show()
+  if (remindersWindow) {
+    remindersWindow.show()
     return
   }
-  const modalPath = path.join('file://', __dirname, '/later-on.html')
-  laterOnWindow = new BrowserWindow({
+  const modalPath = path.join('file://', __dirname, '/reminders.html')
+  remindersWindow = new BrowserWindow({
     icon: windowIconPath(),
     webPreferences: {
       contextIsolation: true,
-      preload: path.join(__dirname, 'preload.js')
+      preload: path.join(__dirname, 'preload-reminders.js')
     }
   })
-  laterOnWindow.loadURL(modalPath)
-  laterOnWindow.webContents.on('did-finish-load', () => {
-    laterOnWindow.webContents.send('initReminders', executor.forFrontend)
+  remindersWindow.loadURL(modalPath)
+  remindersWindow.webContents.on('did-finish-load', () => {
+    remindersWindow.webContents.send('initReminders', executor.forFrontend)
   })
-  // laterOnWindow.toggleDevTools()
-  if (laterOnWindow) {
-    laterOnWindow.on('closed', () => {
-      laterOnWindow = null
+  // remindersWindow.toggleDevTools()
+  if (remindersWindow) {
+    remindersWindow.on('closed', () => {
+      remindersWindow = null
+    })
+  }
+}
+
     })
   }
 }

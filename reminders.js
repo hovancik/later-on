@@ -273,7 +273,14 @@ const newReminder = new Reef('#new', {
     return `<div class='box'>
       <nav class="level">
         <div class="level-left">
-          <h2 class="title is-5">Add reminder</h2>
+        <h2 class="title is-4 has-text-link">
+          <span class="icon-text">
+            <span class="icon">
+              <i class="far fa-plus-square"></i>
+            </span>
+            <span>Add reminder</span>
+          </span>
+        </h2>
         </div>
         <div class="level-right">
           ${newReminder.isVisible
