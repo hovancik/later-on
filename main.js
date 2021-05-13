@@ -17,10 +17,15 @@ const AppIcon = require('./appIcon')
 let tray = null
 let store
 let remindersWindow = null
+let preferencesWindow = null
 let executor
 
 app.whenReady().then(() => {
   const schema = {
+    openAtLogin: {
+      type: 'boolean',
+      default: false
+    },
     reminders: {
       type: 'array',
       default: [{
@@ -48,10 +53,33 @@ app.whenReady().then(() => {
 
   store = new Store({
     schema,
-    migrations
+    migrations,
+    watch: true
   })
+  Store.initRenderer()
   executor = new Executor(store)
+  // TODO workaround for https://github.com/sindresorhus/conf/issues/85#issuecomment-840412336
+  store.store = Object.assign({}, store.store)
+
   executor.planSchedules()
+
+  require('events').defaultMaxListeners = 200 // for watching Store changes
+  Object.entries(store.store).forEach(([key, _]) => {
+    store.onDidChange(key, (newValue, oldValue) => {
+      if (key !== 'reminders') {
+        log.info(`Setting '${key}' to '${newValue}' (was '${oldValue}')`)
+      }
+      if (key === 'openAtLogin') {
+        app.setLoginItemSettings({
+          openAtLogin: store.get('openAtLogin')
+        })
+      }
+    })
+  })
+
+  app.setLoginItemSettings({
+    openAtLogin: store.get('openAtLogin')
+  })
 })
 
 function trayIconPath () {
@@ -85,6 +113,13 @@ app.whenReady().then(() => {
   }, {
     type: 'separator'
   }, {
+    label: 'Preferences',
+    click: function () {
+      showPreferencesWindow()
+    }
+  }, {
+    type: 'separator'
+  }, {
     label: 'Open config.json',
     click: function () {
       shell.openPath(store.path)
@@ -105,9 +140,6 @@ app.whenReady().then(() => {
   }])
   tray.setToolTip('LaterOn - The reminder app')
   tray.setContextMenu(contextMenu)
-  if (process.platform === 'darwin') {
-    app.dock.hide()
-  }
 })
 
 const gotTheLock = app.requestSingleInstanceLock()
@@ -140,6 +172,23 @@ function showRemindersWindow () {
   }
 }
 
+function showPreferencesWindow () {
+  if (preferencesWindow) {
+    preferencesWindow.show()
+    return
+  }
+  const modalPath = path.join('file://', __dirname, '/preferences.html')
+  preferencesWindow = new BrowserWindow({
+    icon: windowIconPath(),
+    webPreferences: {
+      contextIsolation: true,
+      preload: path.join(__dirname, 'preload-preferences.js')
+    }
+  })
+  preferencesWindow.loadURL(modalPath)
+  if (preferencesWindow) {
+    preferencesWindow.on('closed', () => {
+      preferencesWindow = null
     })
   }
 }
