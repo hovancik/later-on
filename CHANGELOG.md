@@ -8,8 +8,11 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Preferences window
 - option to autostart LaterOn on loggin in (MacOS, Windows)
+- show version information in Preferences (current and latest version)
+- show debug information in Preferences
 
 ### Changed
+- move 'Open logs' and 'Open config' from tray menu to Preferences -> Debug
 - improve UI
 - show LaterOn on MacOS's dock
 
