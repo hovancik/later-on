@@ -1,6 +1,5 @@
 const {
   app,
-  shell,
   Menu,
   Tray,
   BrowserWindow,
@@ -14,6 +13,8 @@ const {
 } = require('uuid')
 const Executor = require('./executor')
 const AppIcon = require('./appIcon')
+const VersionChecker = require('./versionChecker')
+let versionChecker = null
 let tray = null
 let store
 let remindersWindow = null
@@ -80,6 +81,9 @@ app.whenReady().then(() => {
   app.setLoginItemSettings({
     openAtLogin: store.get('openAtLogin')
   })
+
+  versionChecker = new VersionChecker(app.getVersion())
+  versionChecker.start()
 })
 
 function trayIconPath () {
@@ -100,10 +104,11 @@ function windowIconPath () {
 
 app.whenReady().then(() => {
   tray = new Tray(trayIconPath())
-  const contextMenu = Menu.buildFromTemplate([{
+  const template = [{
     label: 'LaterOn - The reminder app',
     enabled: false
-  }, {
+  }]
+  template.push({
     type: 'separator'
   }, {
     label: 'Reminders',
@@ -120,24 +125,13 @@ app.whenReady().then(() => {
   }, {
     type: 'separator'
   }, {
-    label: 'Open config.json',
-    click: function () {
-      shell.openPath(store.path)
-    }
-  }, {
-    label: 'Open log',
-    click: function () {
-      shell.openPath(log.transports.file.getFile().path)
-    }
-  }, {
-    type: 'separator'
-  }, {
     label: 'Quit LaterOn',
     role: 'quit',
     click: function () {
       app.quit()
     }
-  }])
+  })
+  const contextMenu = Menu.buildFromTemplate(template)
   tray.setToolTip('LaterOn - The reminder app')
   tray.setContextMenu(contextMenu)
 })
@@ -195,6 +189,18 @@ function showPreferencesWindow () {
 
 app.on('window-all-closed', function () {
   // do nothing, so app wont get closed
+})
+
+ipcMain.handle('current-app-version', async (event) => {
+  return await app.getVersion()
+})
+
+ipcMain.handle('latest-app-version', async (event) => {
+  return await versionChecker.latest
+})
+
+ipcMain.handle('latest-app-url', async (event) => {
+  return await versionChecker.url
 })
 
 ipcMain.handle('remove-reminder', async (event, index) => {
