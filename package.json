@@ -119,11 +119,13 @@
   "dependencies": {
     "@breejs/later": "^4.0.2",
     "@fortawesome/fontawesome-free": "^5.15.3",
+    "@meetfranz/electron-notification-state": "^1.0.0",
     "bulma": "^0.9.2",
     "electron-log": "^4.3.4",
     "electron-store": "^8.0.0",
     "node-fetch": "^2.6.1",
     "reefjs": "^8.2.5",
-    "uuid": "^8.3.2"
+    "uuid": "^8.3.2",
+    "windows-focus-assist": "^1.2.1"
   }
 }

@@ -23,6 +23,10 @@ let executor
 
 app.whenReady().then(() => {
   const schema = {
+    monitorDnd: {
+      type: 'boolean',
+      default: true
+    },
     openAtLogin: {
       type: 'boolean',
       default: false
@@ -74,6 +78,9 @@ app.whenReady().then(() => {
         app.setLoginItemSettings({
           openAtLogin: store.get('openAtLogin')
         })
+      }
+      if (key === 'monitorDnd') {
+        newValue ? executor.dndManager.start() : executor.dndManager.stop()
       }
     })
   })
