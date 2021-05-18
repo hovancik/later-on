@@ -43,13 +43,17 @@ class Reminder {
   }
 
   _notify () {
-    new Notification({
-      title: this.stored.title,
-      body: this.stored.body
-    }).show()
-    log.info(`Notified about '${this.stored.uuid}'`)
-    if (!this.stored.keep && this.stored.type === 'once') {
-      this._removeReminder()
+    if (!this.executor.dndManager.isOnDnd) {
+      new Notification({
+        title: this.stored.title,
+        body: this.stored.body
+      }).show()
+      log.info(`Notified about '${this.stored.uuid}'`)
+      if (!this.stored.keep && this.stored.type === 'once') {
+        this._removeReminder()
+      }
+    } else {
+      log.info(`Did not notify about '${this.stored.uuid}' because of Do Not Disturb mode`)
     }
   }
 

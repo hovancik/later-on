@@ -8,6 +8,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 - Preferences window
 - option to autostart LaterOn on loggin in (MacOS, Windows)
+- option to follow Do Not Disturb mode and not show reminders while active
 - show version information in Preferences (current and latest version)
 - show debug information in Preferences
 

@@ -70,6 +70,10 @@ const preferences = new Reef('#preferences', {
           <input type="checkbox" value="openAtLogin" id="openAtLogin" reef-checked="${props.openAtLogin}">
           <label for="openAtLogin">Start LaterOn automatically when loggin in</label>
         </div>
+        <div class="preference">
+          <input type="checkbox" class="negative" value="monitorDnd" id="monitorDnd" reef-checked="${!props.monitorDnd}">
+          <label for="monitorDnd">Show reminders even in Do Not Disturb mode</label>
+        </div>
           `
         : ''
       }
@@ -212,7 +216,11 @@ document.addEventListener('click', function (event) {
 document.addEventListener('input', function (event) {
   if (event.target.closest('div').matches('.preference')) {
     if (event.target.type === 'checkbox') {
-      store.do('updateStoreValue', event.target.value, event.target.checked)
+      if (event.target.matches('.negative')) {
+        store.do('updateStoreValue', event.target.value, !event.target.checked)
+      } else {
+        store.do('updateStoreValue', event.target.value, event.target.checked)
+      }
     }
   }
 })

@@ -4,11 +4,13 @@ const {
   v4: uuidv4
 } = require('uuid')
 const Reminder = require('./reminder')
+const DndManager = require('./dndManager')
 later.date.localTime()
 
 class Executor {
   constructor (store) {
     this.store = store
+    this.dndManager = new DndManager(store)
     this.reminders = []
   }
 
