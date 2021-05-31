@@ -1,3 +1,4 @@
+const { EventEmitter } = require('events')
 const later = require('@breejs/later')
 const log = require('electron-log')
 const {
@@ -7,8 +8,9 @@ const Reminder = require('./reminder')
 const DndManager = require('./dndManager')
 later.date.localTime()
 
-class Executor {
+class Executor extends EventEmitter {
   constructor (store) {
+    super()
     this.store = store
     this.dndManager = new DndManager(store)
     this.reminders = []
@@ -16,7 +18,9 @@ class Executor {
 
   planSchedules () {
     for (const item of this.store.get('reminders')) {
-      this.reminders.push(new Reminder(item, this))
+      const rem = new Reminder(item, this)
+      rem.on('update-tray', () => this.emit('update-tray'))
+      this.reminders.push(rem)
     }
   }
 
@@ -32,6 +36,7 @@ class Executor {
     this.reminders[index].clearTimer()
     this.reminders.splice(index, 1)
     log.info(`Removed '${removed[0].uuid}'`)
+    this.emit('update-tray')
     return index
   }
 
@@ -54,6 +59,7 @@ class Executor {
     this.store.set('reminders', storedReminders)
     this.reminders[index] = new Reminder(newReminder, this)
     log.info(`Updated '${newReminder.uuid}' (${JSON.stringify(newReminder)})`)
+    this.emit('update-tray')
     return this.reminders[index].forFrontend
   }
 
@@ -71,8 +77,11 @@ class Executor {
     }
     storedReminders.push(newReminder)
     this.store.set('reminders', storedReminders)
-    this.reminders.push(new Reminder(newReminder, this))
+    const rem = new Reminder(newReminder, this)
+    this.reminders.push(rem)
+    rem.on('update-tray', () => this.emit('update-tray'))
     log.info(`Added '${newReminder.uuid}' (${JSON.stringify(newReminder)})`)
+    this.emit('update-tray')
     return this.reminders.slice(-1).pop().forFrontend
   }
 
@@ -80,6 +89,13 @@ class Executor {
     return this.reminders.map((item) => {
       return item.forFrontend
     })
+  }
+
+  get upcomingReminders () {
+    return this.reminders.map((item) => {
+      return item.upcomingReminders
+    }).flat().sort((a, b) => { return a[2] - b[2] })
+      .filter((x) => x[2] > new Date())
   }
 }
 

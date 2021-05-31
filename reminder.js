@@ -1,10 +1,12 @@
+const { EventEmitter } = require('events')
 const later = require('@breejs/later')
 const { Notification } = require('electron')
 const log = require('electron-log')
 later.date.localTime()
 
-class Reminder {
+class Reminder extends EventEmitter {
   constructor (stored, executor) {
+    super()
     this.executor = executor
     this.stored = stored
     this.timer = null
@@ -55,6 +57,7 @@ class Reminder {
     } else {
       log.info(`Did not notify about '${this.stored.uuid}' because of Do Not Disturb mode`)
     }
+    this.emit('update-tray')
   }
 
   clearTimer () {
@@ -76,6 +79,23 @@ class Reminder {
         ? [later.schedule(this.parsed).next()]
         : later.schedule(this.parsed).next(3)
     }
+  }
+
+  get upcomingReminders () {
+    let next
+    if (this.stored.type === 'once') {
+      next = [later.schedule(this.parsed).next()]
+      if (this.stored.keep) {
+        next = ['we do not show those as they are probably duplicates',
+          'so we set next occurance to now -> it won\'t get shown in tray',
+          new Date()]
+      }
+    } else {
+      next = later.schedule(this.parsed).next(10)
+    }
+    return next.map((schedule) => {
+      return [this.stored.title, this.stored.body, schedule]
+    })
   }
 }
 

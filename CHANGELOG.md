@@ -11,6 +11,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - option to follow Do Not Disturb mode and not show reminders while active
 - show version information in Preferences (current and latest version)
 - show debug information in Preferences
+- show 20 upcoming reminders in tray menu
 
 ### Changed
 - move 'Open logs' and 'Open config' from tray menu to Preferences -> Debug
