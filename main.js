@@ -67,6 +67,9 @@ app.whenReady().then(() => {
   store.store = Object.assign({}, store.store)
 
   executor.planSchedules()
+  executor.on('update-tray', (event) => {
+    updateTray()
+  })
 
   require('events').defaultMaxListeners = 200 // for watching Store changes
   Object.entries(store.store).forEach(([key, _]) => {
@@ -82,6 +85,7 @@ app.whenReady().then(() => {
       if (key === 'monitorDnd') {
         newValue ? executor.dndManager.start() : executor.dndManager.stop()
       }
+      updateTray()
     })
   })
 
@@ -111,6 +115,11 @@ function windowIconPath () {
 
 app.whenReady().then(() => {
   tray = new Tray(trayIconPath())
+  updateTray()
+})
+
+function updateTray () {
+  log.info('Updating tray')
   const template = [{
     label: 'LaterOn - The reminder app',
     enabled: false
@@ -122,6 +131,11 @@ app.whenReady().then(() => {
     click: function () {
       showRemindersWindow()
     }
+  }, {
+    label: 'Upcoming',
+    submenu: executor.upcomingReminders.slice(0, 19).map((rem) => {
+      return { label: `${rem[0]} (${rem[1]}) at ${rem[2].toLocaleString()}` }
+    })
   }, {
     type: 'separator'
   }, {
@@ -141,7 +155,7 @@ app.whenReady().then(() => {
   const contextMenu = Menu.buildFromTemplate(template)
   tray.setToolTip('LaterOn - The reminder app')
   tray.setContextMenu(contextMenu)
-})
+}
 
 const gotTheLock = app.requestSingleInstanceLock()
 if (!gotTheLock) {
