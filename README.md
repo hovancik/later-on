@@ -6,7 +6,7 @@
 
 *LaterOn* is a cross-platform [Electron](https://www.electronjs.org/) app that allows you to create custom reminders.
 
-Currently, *LaterOn* is considered an *alpha*-quality software. Download it from [Releases page](https://github.com/hovancik/later-on/releases).
+Download it from [Releases page](https://github.com/hovancik/later-on/releases).
 
 [![Become a Sponsor!](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=success)](https://github.com/sponsors/hovancik) [![Become a Patron!](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=Patreon&color=success)](https://www.patreon.com/hovancik)
 

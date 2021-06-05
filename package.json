@@ -1,6 +1,6 @@
 {
   "name": "LaterOn",
-  "version": "0.0.4",
+  "version": "0.1.0",
   "description": "The reminder app",
   "main": "main.js",
   "engines": {
