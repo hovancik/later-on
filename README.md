@@ -6,7 +6,7 @@
 
 *LaterOn* is a cross-platform [Electron](https://www.electronjs.org/) app that allows you to create custom reminders.
 
-Currently, *LaterOn* is considered an *alpha*-quality software. Download it from [Releases page](https://github.com/hovancik/later-on/releases).
+Download it from [Releases page](https://github.com/hovancik/later-on/releases).
 
 [![Become a Sponsor!](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&color=success)](https://github.com/sponsors/hovancik) [![Become a Patron!](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=Patreon&color=success)](https://www.patreon.com/hovancik)
 
@@ -46,6 +46,21 @@ You can also use [cron](https://breejs.github.io/later/parsers.html#cron) syntax
 Same rules apply when adding new reminder.
 
 <img src="new-reminder.png" alt="LaterOn">
+
+## Tray menu
+
+*LaterOn* lives in your tray are and has a menu there.  
+
+<img src="tray.png" alt="LaterOn tray" height="200">
+
+You can open Reminders management, see upcoming reminders and access Preferences as well.
+
+<img src="tray-upcoming.png" alt="LaterOn tray" height="200">
+
+Preferences allow you to setup various aspects of *LaterOn*, see information about the app and debugging info.
+
+<img src="preferences.png" alt="LaterOn Preferences">
+
 
 ## Credits
 
